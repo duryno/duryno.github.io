@@ -3,24 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <title>Project 1</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        body {
+            background-color: #f7f7f7;
+            font-family: 'Open Sans', sans-serif;
+        }
+        header {
+            width: 100%;
+            min-height: 100px;
+        }
+        section {
+            padding: 24px 0;
+        }
+        img {
+            max-height: 256px;
+            margin-top: 50px;
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        h3 {
+            font-weight: 700;
+        }
+        #content {
+            width: 70%;
+            margin: 0 auto;
+        }
+        .yellow {
+            background-color: #ffc107;
+        }
+        #goals header {
+            width: 44%;
+            margin: 24px 1%;
+            padding: 2%;
+            float: left;
+            overflow: hidden;
+            background-color: #fff;
+            border-radius: 3px;
+            -webkit-box-shadow: 2px 3px 10px rgba(0, 0, 0, 0.1);
+            -moz-box-shadow: 2px 3px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 2px 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        #goals header ol {
+            padding-left: 16px;
+        }
+        #goals header li {
+            padding-bottom: 16px;
+        }
+    </style>
 </head>
 <body>
 
-    <header style="background-color: #ffc107; width: 100%; height: 100px;"></header>
+    <header class="yellow"></header>
 
-    <img style="margin: 50px auto; position: relative;" src="https://trevl.eu/wp-content/themes/bazaar-lite/assets/images/logo-circle.svg"/>
+    <div id="content">
+        <img src="https://trevl.eu/wp-content/themes/bazaar-lite/assets/images/logo-circle.svg"/>
 
-    <ul>
-        <li>Link 1</li>
-        <li>Link 2</li>
-    </ul>
+        <section>
+            <h2>
+                Visualisations from the Web
+            </h2>
+
+            <ul>
+                <li>
+                    <a href="https://answerthepublic.com/reports/f72b7de7-3952-40fe-87e2-b1bfad8b5599">https://answerthepublic.com/reports/f72b7de7-3952-40fe-87e2-b1bfad8b5599</a>
+                </li>
+                <li>
+                    <a href="http://rhythm-of-food.net/">http://rhythm-of-food.net/</a>
+                </li>
+                <li>
+                    <a href = "http://www.dr.dk/nyheder/politik/kv17/resultater">DR kommunalvalg 2017</a>
+                </li>
+            </ul>
+        </section>
+
+        <section id="goals">
+            <h2>Our Goals for the Course</h2>
+
+            <header>
+                <h3>Juraj</h3>
+                <br/>
+                <ol>
+                    <li>
+                        What I'd like to be able to build at the end of this course is a dashboard similar to the one in Google Analytics which will display stats
+                        relevant to content of the travel startup I'm building. Specifically, it should be possible to display the number of views of a particular attraction
+                        during a specified time period (with days being the smallest unit), number of likes/dislikes of the attraction, its average rating, average time
+                        spent by the user at the attraction's page, number of photos and stories related to the attraction, etc.
+                        Similarly, it should be possible to display similar data for stories that the users can write.
+                    </li>
+                    <li>
+                        The visualisation should describe the engagement of users of all apps (web and Android) in one place. Moreover, it shall show patterns
+                        in user behaviour and popularity of places/stories in relation to others.
+                    </li>
+                    <li>
+                        The dashboard described above should be used primarily by myself, others involved in the company and the company partners. This means
+                        most users are expected to have a pretty good understanding of the platform and of the visualised data.
+                    </li>
+                    <li>
+                        *Sample charts taken from Google Analytics and Google Charts Docs
+                        <img src="images/analytics-dashboard.png">
+                    </li>
+                </ol>
+                </ol>
+            </header>
+
+            <header>
+                <h3>Kamma</h3>
+                <br/>
+            </header>
+
+            <div style="clear: both;"></div>
+
+        </section>
+    </div>
 
     <script>
         var img = document.createElement("img");
-        img.src = "https://trevl.eu/wp-content/themes/bazaar-lite/assets/images/trevl-screenshot.png";
+        img.src = "https://i0.wp.com/trevl.eu/wp-content/uploads/2017/11/garden-prince-eugens-waldemarsudde-djurgarden-stockholm.jpg?w=1280&ssl=1";
+        img.classList.add("circle");
 
         document.body.appendChild(img);
-
     </script>
 
 </body>
