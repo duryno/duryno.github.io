@@ -2,12 +2,13 @@
     margin: 0;
     padding: 0;
 }
+html, body {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px;
+}
 section {
     width: 96%;
     float: left;
     margin: 24px 2%;
     background-color: #fff;
 }
-/*#radial-plot {*/
-    /*width: 100%;*/
-/*}*/

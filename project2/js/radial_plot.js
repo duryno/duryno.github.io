@@ -23,7 +23,7 @@ function init() {
         .range([0, 2 * Math.PI])
         .align(0);
 
-    var y = d3.scaleRadial()
+    var y = d3.scaleLinear()
         .range([innerRadius, outerRadius]);
 
     d3.tsv("copenhagen.txt", function(error, data) {
@@ -39,8 +39,8 @@ function init() {
 
         // data.sort(function(a, b) { return b[data.columns[6]] -  a[data.columns[6]]; });
         x.domain(data.map(function(d,i) { return months[(i%12)]; }));
-        y.domain([0, d3.max(data, function(d,i) { var month = months[(i%12)].toUpperCase(); return d[month]; })])
-         .range([50, 1000]);
+        y.domain([0, 30])//d3.max(data, function(d,i) { var month = months[(i%12)].toUpperCase(); return d[month]; })]) --remove missing values (999)
+         .range([50, 150]);
         // z.domain(data.columns.slice(1));
 
         // var y = d3.scaleRadial()
@@ -66,61 +66,96 @@ function init() {
         //     .attr("height", function(d,i) { return height - y(getMonthAverage(data, d, i));
         //     });
 
+        var label = g.append("g")
+            .selectAll("g")
+            .data(data)
+            .enter().append("g")
+            .attr("text-anchor", "middle")
+            .attr("transform", function(d,i) { return "rotate(" + ((x(months[(i%12)]) + x.bandwidth() / 2) * 180 / Math.PI - 90)  + ")translate(" + innerRadius + ",0)"; });
+
+        label.append("text")
+            .attr("transform", function(d) { return "rotate(90)"; })
+            .style("font-size", "14px")
+            .text(function(d,i) { return months[(i%12)]; });
+
+        var yAxis = g.append("g")
+            .attr("text-anchor", "end");
+
+        var yTick = yAxis
+            .selectAll("g")
+            .data(y.ticks(5).slice(1))
+            .enter().append("g");
+
+        yTick.append("circle")
+            .attr("fill", "none")
+            .attr("stroke", "#000")
+            .attr("stroke-dasharray", "3,5")
+            .attr("stroke-opacity", 0.2)
+            .attr("r", y);
+
+        yTick.append("circle")
+            .attr("fill", "none")
+            .attr("stroke", "#000")
+            .attr("r", y(35));
+
+        //weird hack
+        yTick.append("text")
+            .attr("x", 0)
+            .attr("y", function(d) { return -y(d); })
+            .attr("dy", "0.15em")
+            .attr("transform", "rotate(18)")
+            .attr("stroke", "#fff")
+            .attr("stroke-width", 5)
+            .text(y.tickFormat(10, "s"));
+
+        yTick.append("text")
+            .attr("x", 0)
+            .attr("y", function(d) { return -y(d); })
+            .attr("fill", "rgba(0,0,0,0.38)")
+            .attr("dy", "0.15em")
+            .attr("transform", "rotate(18)")
+            .text(y.tickFormat(10, "s"));
+
+        var colorScale =
+            d3.scaleLinear()
+                .domain(d3.extent(data,
+                    function(d,i){
+                        return getMonthAverage(data, d.data, i);}))
+                .range([0,0.75]);
+
         g.append("g")
             .selectAll("g")
             .data(d3.stack().keys(data.columns.slice(1))(data))
-            .enter().append("g")
+            .enter()
+            .append("g")
             .selectAll("path")
             .data(function(d) { return d; })
-            .enter().append("path")
+            .enter()
+            .append("path")
             .attr("d", d3.arc()
                 .innerRadius(function(d) { return 50; })
                 .outerRadius(function(d,i) { return y(getMonthAverage(data, d.data, i)); })
                 .startAngle(function(d,i) { return x(months[(i%12)]); })
                 .endAngle(function(d,i) { return x(months[(i%12)]) + x.bandwidth(); })
                 .padAngle(0.02)
-                .padRadius(innerRadius));
+                .padRadius(innerRadius))
+            .attr("fill", function(d,i) {
+                return d3.interpolatePlasma(colorScale(getMonthAverage(data, d.data, i)));
+            })
+            .on("mouseover", handleMouseOver)
+            .on("mouseout", handleMouseOut);
 
-        var label = g.append("g")
-            .selectAll("g")
-            .data(data)
-            .enter().append("g")
-            .attr("text-anchor", "middle")
-            .attr("transform", function(d,i) { return "rotate(" + ((x(months[(i%12)]) + x.bandwidth() / 2) * 180 / Math.PI - 90) + ")translate(" + innerRadius + ",0)"; });
+        function handleMouseOver(d, i) {
 
-        label.append("text")
-            .attr("transform", function(d) { return "rotate(90)"; })
-            .text(function(d,i) { return months[(i%12)]; });
+            // Use D3 to select element, change color and size
+            d3.select(this).attr("fill", "#FF6D00");
+            console.log(getMonthAverage(data, d.data, i));
+        }
 
-        // var yAxis = g.append("g")
-        //     .attr("text-anchor", "end");
-        //
-        // var yTick = yAxis
-        //     .selectAll("g")
-        //     .data(y.ticks(10).slice(1))
-        //     .enter().append("g");
-        //
-        // yTick.append("circle")
-        //     .attr("fill", "none")
-        //     .attr("stroke", "#000")
-        //     .attr("stroke-opacity", 0.5)
-        //     .attr("r", y);
-        //
-        // yTick.append("text")
-        //     .attr("x", -6)
-        //     .attr("y", function(d) { return -y(d); })
-        //     .attr("dy", "0.35em")
-        //     .attr("fill", "none")
-        //     .attr("stroke", "#fff")
-        //     .attr("stroke-width", 5)
-        //     .text(y.tickFormat(10, "s"));
-        //
-        // yTick.append("text")
-        //     .attr("x", -6)
-        //     .attr("y", function(d) { return -y(d); })
-        //     .attr("dy", "0.35em")
-        //     .text(y.tickFormat(10, "s"));
-        //
+        function handleMouseOut(d, i) {
+            // Use D3 to select element, change color back to normal
+            d3.select(this).attr("fill", d3.interpolatePlasma(colorScale(getMonthAverage(data, d.data, i))));
+        }
         // yAxis.append("text")
         //     .attr("x", -6)
         //     .attr("y", function(d) { return -y(y.ticks(10).pop()); })
@@ -151,104 +186,4 @@ function init() {
         return d3.mean(data, function(d) { return d[month]; });
     }
 
-    // var width = 960,
-    //     height = 500,
-    //     barHeight = height / 2 - 40;
-    //
-    // var formatNumber = d3.format("s");
-    //
-    // var color = d3.scaleOrdinal()
-    //     .range(["#8dd3c7","#ffffb3","#bebada","#fb8072","#80b1d3","#fdb462","#b3de69","#fccde5","#d9d9d9","#bc80bd","#ccebc5","#ffed6f"]);
-    //
-    // var svg = d3.select('body').append("svg")
-    //     .attr("width", width)
-    //     .attr("height", height)
-    //     .append("g")
-    //     .attr("transform", "translate(" + width/2 + "," + height/2 + ")");
-    //
-    // d3.tsv("copenhagen.txt", function(error, data) {
-    //
-    //     data.sort(function(a,b) { return b.YEAR - a.YEAR; });
-    //
-    //     // var extent = d3.extent(data, function(d) { return d.YEAR; });
-    //     var barScale = d3.scaleLinear()
-    //         .domain(0, 30)
-    //         .range([50, barHeight]);
-    //
-    //     // var keys = data.map(function(d,i) {
-    //     //     if(i < 12)
-    //     //         return months[i];
-    //     // });
-    //     var numBars = months.length;
-    //
-    //     var x = d3.scaleLinear()
-    //         .domain(0, 30)
-    //         .range([0, -barHeight]);
-    //
-    //     var xAxis = d3.axisLeft()
-    //         .scale(x)
-    //         .ticks(3)
-    //         .tickFormat(formatNumber);
-    //
-    //     var circles = svg.selectAll("circle")
-    //         .data(x.ticks(3))
-    //         .enter().append("circle")
-    //         .attr("r", function(d) {return barScale(d);})
-    //         .style("fill", "none")
-    //         .style("stroke", "black")
-    //         .style("stroke-dasharray", "2,2")
-    //         .style("stroke-width",".5px");
-    //
-    //     var arc = d3.arc()
-    //         .startAngle(function(d,i) { return (i * 2 * Math.PI) / numBars; })
-    //         .endAngle(function(d,i) { return ((i + 1) * 2 * Math.PI) / numBars; })
-    //         .innerRadius(50);
-    //
-    //     var segments = svg.selectAll("path")
-    //         .data(data)
-    //         .enter().append("path")
-    //         .each(function(d) { d.outerRadius = 0; })
-    //         .style("fill", function (d,i) { return color(months[i]); })
-    //         .attr("d", arc);
-    //
-    //     // segments.transition().ease("elastic").duration(1000).delay(function(d,i) {return (25-i)*100;})
-    //     //     .attrTween("d", function(d,index) {
-    //     //         var i = d3.interpolate(d.outerRadius, barScale(+d));
-    //     //         return function(t) { d.outerRadius = i(t); return arc(d,index); };
-    //     //     });
-    //
-    //     svg.append("circle")
-    //         .attr("r", barHeight)
-    //         .classed("outer", true)
-    //         .style("fill", "none")
-    //         .style("stroke", "black")
-    //         .style("stroke-width","1.5px");
-    //
-    //     svg.append("g")
-    //         .attr("class", "x axis")
-    //         .call(xAxis);
-    //
-    //     // Labels
-    //     var labelRadius = barHeight * 1.025;
-    //
-    //     var labels = svg.append("g")
-    //         .classed("labels", true);
-    //
-    //     labels.append("def")
-    //         .append("path")
-    //         .attr("id", "label-path")
-    //         .attr("d", "m0 " + -labelRadius + " a" + labelRadius + " " + labelRadius + " 0 1,1 -0.01 0");
-    //
-    //     labels.selectAll("text")
-    //         .data(months)
-    //         .enter().append("text")
-    //         .style("text-anchor", "middle")
-    //         .style("font-weight","bold")
-    //         .style("fill", function(d, i) {return "#3e3e3e";})
-    //         .append("textPath")
-    //         .attr("xlink:href", "#label-path")
-    //         .attr("startOffset", function(d, i) {return i * 100 / numBars + 50 / numBars + '%';})
-    //         .text(function(d) {return d.toUpperCase(); });
-    //
-    // });
 }
