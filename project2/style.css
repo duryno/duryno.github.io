@@ -7,7 +7,7 @@ a {
 }
 section {
     width: 46%;
-    height: 560px;
+    min-height: 560px;
     float: left;
     margin: 6px 1%;
     background-color: #fff;
