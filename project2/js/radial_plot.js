@@ -1,77 +1,39 @@
 /**
- * Created by Juraj on 02/12/2017.
+ * Created by Juraj Orszag on 02/12/2017.
+ * Partially based on the example by Mike Bostock available at https://bl.ocks.org/mbostock/5479367295dfe8f21002fc71d6500392
  */
+
 d3.select(window).on('load', init);
 
 function init() {
+//Copenhagen plot
+
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    var svg = d3.select("svg"),
-        width = +svg.attr("width"),
-        height = +svg.attr("height"),
-        innerRadius = 180,
-        outerRadius = Math.min(width, height) * 0.67,
-        g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 3 + ")");
+    var sectionWidth = d3.select("section").node().getBoundingClientRect().width;
+    var svg = d3.select("#radial-plot");
+    var width = +svg.attr("width");
+    var height = +svg.attr("height");
+    var radius = 180;
 
-    // var g = svg.append("g")
-    //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    var g = svg.append("g").attr("transform", "translate(" + ((sectionWidth * 0.46) /2) + "," + height / 2 + ")");
 
-    // var x = d3.scaleBand().rangeRound([0, width]).padding(0.1)
-    //     .domain(data.map(function(d,i) { return months[(i%12)]; }));
-
-    var x = d3.scaleBand()
-        .range([0, 2 * Math.PI])
-        .align(0);
-
-    var y = d3.scaleLinear()
-        .range([innerRadius, outerRadius]);
+    var x = d3.scaleBand().range([0, 2 * Math.PI]);
+    var y = d3.scaleLinear();
 
     d3.tsv("copenhagen.txt", function(error, data) {
-
-        // var svg = d3.select('svg');
-        // var margin = {top: 100, right: 100, bottom: 100, left: 100};
-        // var width = +svg.node().getBoundingClientRect().width - margin.left - margin.right;
-        // var height = +svg.node().getBoundingClientRect().height - margin.top - margin.bottom;
-
-
-        // var y = d3.scaleLinear().rangeRound([height, 0])
-        //     .domain([0, 28]); //try to come up with a dynamic solution for max temperature
-
-        // data.sort(function(a, b) { return b[data.columns[6]] -  a[data.columns[6]]; });
         x.domain(data.map(function(d,i) { return months[(i%12)]; }));
-        y.domain([0, 30])//d3.max(data, function(d,i) { var month = months[(i%12)].toUpperCase(); return d[month]; })]) --remove missing values (999)
+        y.domain([0, 20])
          .range([50, 150]);
-        // z.domain(data.columns.slice(1));
-
-        // var y = d3.scaleRadial()
-        //     .domain([0, d3.mean(data, function(d,i) { var month = months[(i%12)].toUpperCase(); return d[month]; })]);
-
-        // g.append("g")
-        //     .attr("class", "axis x")
-        //     .attr("transform", "translate(0," + height + ")")
-        //     .call(d3.axisBottom(x));
-        //
-        // g.append("g")
-        //     .attr("class", "axis y")
-        //     .call(d3.axisLeft(y).ticks(10));
-        //
-        // g.selectAll(".bar")
-        //     .data(data)
-        //     .enter().append("rect")
-        //     .attr("x", function(d,i) { return x(months[(i%12)]); })
-        //     .attr("y", function(d,i) {
-        //         return y(getMonthAverage(data, d, i));
-        //     })
-        //     .attr("width", x.bandwidth())
-        //     .attr("height", function(d,i) { return height - y(getMonthAverage(data, d, i));
-        //     });
 
         var label = g.append("g")
             .selectAll("g")
             .data(data)
             .enter().append("g")
-            .attr("text-anchor", "middle")
-            .attr("transform", function(d,i) { return "rotate(" + ((x(months[(i%12)]) + x.bandwidth() / 2) * 180 / Math.PI - 90)  + ")translate(" + innerRadius + ",0)"; });
+            .attr("transform", function(d,i) {
+                return "rotate(" + ((x(months[(i%12)]) + x.bandwidth() / 2) * 180 / Math.PI - 90)
+                    + ")translate(" + radius + ",0)";
+            });
 
         label.append("text")
             .attr("transform", function(d) { return "rotate(90)"; })
@@ -96,9 +58,8 @@ function init() {
         yTick.append("circle")
             .attr("fill", "none")
             .attr("stroke", "#000")
-            .attr("r", y(35));
+            .attr("r", y(24));
 
-        //weird hack
         yTick.append("text")
             .attr("x", 0)
             .attr("y", function(d) { return -y(d); })
@@ -116,12 +77,9 @@ function init() {
             .attr("transform", "rotate(18)")
             .text(y.tickFormat(10, "s"));
 
-        var colorScale =
-            d3.scaleLinear()
-                .domain(d3.extent(data,
-                    function(d,i){
-                        return getMonthAverage(data, d.data, i);}))
-                .range([0,0.75]);
+        var colorScale = d3.scaleLinear()
+            .domain(d3.extent(data,function(d,i){return getMonthAverage(data, i);}))
+            .range([0,0.8]);
 
         g.append("g")
             .selectAll("g")
@@ -134,56 +92,210 @@ function init() {
             .append("path")
             .attr("d", d3.arc()
                 .innerRadius(function(d) { return 50; })
-                .outerRadius(function(d,i) { return y(getMonthAverage(data, d.data, i)); })
+                .outerRadius(function(d,i) { return y(getMonthAverage(data, i)); })
                 .startAngle(function(d,i) { return x(months[(i%12)]); })
                 .endAngle(function(d,i) { return x(months[(i%12)]) + x.bandwidth(); })
                 .padAngle(0.02)
-                .padRadius(innerRadius))
+                .padRadius(radius))
             .attr("fill", function(d,i) {
-                return d3.interpolatePlasma(colorScale(getMonthAverage(data, d.data, i)));
+                return d3.interpolatePlasma(colorScale(getMonthAverage(data, i)));
             })
             .on("mouseover", handleMouseOver)
             .on("mouseout", handleMouseOut);
 
         function handleMouseOver(d, i) {
-
-            // Use D3 to select element, change color and size
             d3.select(this).attr("fill", "#FF6D00");
-            console.log(getMonthAverage(data, d.data, i));
+            var avgTemp = document.getElementById("avg-temp");
+            var month = months[(i%12)];
+            avgTemp.innerHTML = month + " | " + parseFloat(getMonthAverage(data, i)).toFixed(2) + "°C";
         }
 
         function handleMouseOut(d, i) {
-            // Use D3 to select element, change color back to normal
-            d3.select(this).attr("fill", d3.interpolatePlasma(colorScale(getMonthAverage(data, d.data, i))));
+            d3.select(this).attr("fill", d3.interpolatePlasma(colorScale(getMonthAverage(data, i))));
+            var avgTemp = document.getElementById("avg-temp");
+            avgTemp.innerHTML = "- | -";
         }
-        // yAxis.append("text")
-        //     .attr("x", -6)
-        //     .attr("y", function(d) { return -y(y.ticks(10).pop()); })
-        //     .attr("dy", "-1em")
-        //     .text("Population");
-        //
-        // var legend = g.append("g")
-        //     .selectAll("g")
-        //     .data(data.columns.slice(1).reverse())
-        //     .enter().append("g")
-        //     .attr("transform", function(d, i) { return "translate(-40," + (i - (data.columns.length - 1) / 2) * 20 + ")"; });
-        //
-        // legend.append("rect")
-        //     .attr("width", 18)
-        //     .attr("height", 18)
-        //     .attr("fill", z);
-        //
-        // legend.append("text")
-        //     .attr("x", 24)
-        //     .attr("y", 9)
-        //     .attr("dy", "0.35em")
-        //     .text(function(d) { return d; });
+
+//Aalborg plots
+        var w = 500;
+        var h = 400;
+
+        var w2 = 500;
+        var h2 = 400;
+        var padding2 = 30;
+        var datasetAalborgMelt;
+
+        var rowConverter = function(d){
+            return {
+                YEAR: parseFloat(d.YEAR),
+                JAN: parseFloat(d.JAN),
+                FEB: parseFloat(d.FEB),
+                MAR: parseFloat(d.MAR),
+                APR: parseFloat(d.APR),
+                MAY: parseFloat(d.MAY),
+                JUN: parseFloat(d.JUN),
+                JUL: parseFloat(d.JUL),
+                AUG: parseFloat(d.AUG),
+                SEP: parseFloat(d.SEP),
+                OCT: parseFloat(d.OCT),
+                NOV: parseFloat(d.NOV),
+                DEC: parseFloat(d.DEC)};
+        };
+
+        var rowConverter2 = function(d){
+            return {
+                value: parseFloat(d.value),
+                dates1: new Date(+d.YEAR, (+d.month_nr - 1))
+            };
+        };
+
+        d3.csv('stationAalborg.csv',rowConverter, function(error, data) {
+            if (error) {console.log(error);}
+
+            datasetAa = data;
+
+            var svg1 = d3.select('#scatter-plot')
+                .append('svg')
+                .attr("width", w)
+                .attr("height", h)
+                .attr("transform", "translate(0, 30)");
+
+            var padding = 20;
+
+            var xmax = d3.max(data, function(d){return d.YEAR;});
+            var xmin = d3.min(data, function(d){return d.YEAR;});
+
+            var ymax = 20;
+            var ymin = -10;
+
+            var xScale = d3.scaleLinear()
+                .domain([ xmin,xmax ])
+                .range([padding, w - padding]);
+
+            var yScale = d3.scaleLinear()
+                .domain([ymin, ymax ])
+                .range([h - padding, padding]);
+
+            var xAxis = d3.axisBottom()
+                .scale(xScale)
+                .tickFormat(d3.format('d'))
+                .ticks(5);
+
+            var yAxis = d3.axisLeft()
+                .scale(yScale)
+                .ticks(5);
+
+            g = svg1.selectAll("g")
+                .data(data)
+                .enter()
+                .append("g");
+
+            for(var j=0; j<months.length; j++) {
+                g.append("circle")
+                    .attr("cx", function(d){return xScale(d.YEAR);})
+                    .attr("cy", function(d){
+                        var value = isNaN(d[(months[j].toUpperCase())]) ? 0 : d[(months[j].toUpperCase())];
+                        return yScale(value);
+                    })
+                    .attr("r", 4)
+                    .attr("class", months[j]);
+            }
+
+            //Create X axis
+            svg1.append("g")
+                .attr("class", "axis")
+                .call(xAxis)
+                .attr("transform","translate(0," + (h - padding) + ")");
+
+            //Create Y axis
+            svg1.append("g")
+                .attr("class", "axis")
+                .call(yAxis)
+                .attr("transform","translate(" +  padding + ",0)");
+
+        });
+
+
+        d3.tsv('meltedStation Aalborg_20171205.txt', rowConverter2,
+            function(error, data) {
+                if (error) {console.log(error);}
+
+                datasetAalborgMelt = data;
+
+                var svg2 = d3.select('#temperature-change')
+                    .append('svg')
+                    .attr("width", w2)
+                    .attr("height", h2)
+                    .attr("transform", "translate(0, 30)");
+
+                var xmax = d3.max(data, function(d){return d.dates1;});
+                var xmin = d3.min(data, function(d){return d.dates1;});
+
+                var ymax = 20;
+                var ymin = d3.min(data, function(d){return d.value;});
+
+                var xScale = d3.scaleTime()
+                    .domain([ xmin - 365*24*3600*1000, xmax ])  // Why is it ipossible to add tne number to xmax?
+                    .range([padding2, w2 - padding2]);
+
+                var yScale = d3.scaleLinear()
+                    .domain([ymin -1 , ymax + 1 ])
+                    .range([h2 - padding2, padding2]);
+
+                //Define line generator
+                lineKW = d3.line()
+                    .defined(function(d) { return d.value < 100; })
+                    .x(function(d) { return xScale(d.dates1); })
+                    .y(function(d) { return yScale(d.value); });
+
+                var xAxis = d3.axisBottom()
+                    .scale(xScale)
+                    .ticks(5);
+
+                var yAxis = d3.axisLeft()
+                    .scale(yScale)
+                    .ticks(5);
+
+                circles = svg2.selectAll("circle")
+                    .data(data)
+                    .enter()
+                    .append("circle")
+                    .attr("cx", function(d){return xScale(d.dates1);})
+                    .attr("cy", function(d){return yScale(d.value);})
+                    .attr("r", 1)
+                    .attr("fill" , "grey")
+                    .attr("stroke" , "grey");
+
+                //Create line
+                svg2.append("path")
+                    .datum(data)
+                    .attr("class", "line")
+                    .attr("d", lineKW)
+                    .attr("stroke" , "grey")
+                    .attr("fill", "none");
+
+                //Create X axis
+                svg2.append("g")
+                    .attr("class", "axis")
+                    .call(xAxis)
+                    .attr("transform","translate(0," + (h2 - padding2) + ")");
+
+                //Create Y axis
+                svg2.append("g")
+                    .attr("class", "axis")
+                    .call(yAxis)
+                    .attr("transform","translate(" +  padding2 + ",0)");
+            }
+        );
 
     });
 
-    function getMonthAverage(data, d, i) {
+//helper function for Copenhagen plot
+    function getMonthAverage(data, i) {
         var month = months[(i%12)].toUpperCase();
-        return d3.mean(data, function(d) { return d[month]; });
+        return d3.mean(data, function(d) {
+            return d[month] !== '999.9' ? d[month] : 0;
+        });
     }
 
 }
