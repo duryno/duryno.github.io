@@ -1,29 +1,42 @@
 {
   "name": "Donald Trump",
+  "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Official_Portrait_of_President_Donald_Trump.jpg/1200px-Official_Portrait_of_President_Donald_Trump.jpg",
+  "bio": "Donald John Trump (born June 14, 1946) is the 45th and current President of the United States, in office since January 20, 2017. Before entering politics, he was a businessman and television personality.",
   "partners": [
     {
       "name": "Ivana Trump",
+      "img": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Ivana_Trump_cropped_retouched.jpg",
+      "bio": "Ivana Marie Trump (née Zelníčková, Czech: [ˈzɛlɲiːtʃkovaː]; born February 20, 1949) is a Czech-American businesswoman, former fashion model, author, and television personality. She was the first wife of Donald Trump from 1977 until 1992.",
       "children": [
         {
           "name": "Donald Trump Jr.",
+          "img": "https://upload.wikimedia.org/wikipedia/commons/2/29/Donald_Trump%2C_Jr._%2830309613870%29.jpg",
+          "bio": "Donald John Trump Jr. (born December 31, 1977) is an American businessman and former reality TV personality. He is the oldest child of the 45th President of the United States, Donald Trump, and his first wife, Ivana.",
           "partners": [
             {
               "name": "Vanessa Trump",
+              "img": "https://heavyeditorial.files.wordpress.com/2016/02/vanessa-haydon-trump-14.jpg?quality=65&strip=all&strip=all",
+              "bio": "The wife of Donald Trump Jr.",
               "children": [
                 {
-                  "name": "Kai Madison"
+                  "name": "Kai Madison",
+                  "bio": "A daughter of Donald Trump Jr."
                 },
                 {
-                  "name": "Donald III"
+                  "name": "Donald III",
+                  "bio": "A son of Donald Trump Jr."
                 },
                 {
-                  "name": "Chloe Sophia"
+                  "name": "Chloe Sophia",
+                  "bio": "A daughter of Donald Trump Jr."
                 },
                 {
-                  "name": "Tristan Milos"
+                  "name": "Tristan Milos",
+                  "bio": "A son of Donald Trump Jr."
                 },
                 {
-                  "name": "Spencer Frederick"
+                  "name": "Spencer Frederick",
+                  "bio": "A son of Donald Trump Jr."
                 }
               ]
             }
@@ -31,18 +44,25 @@
         },
         {
           "name": "Ivanka Trump",
+          "img": "https://upload.wikimedia.org/wikipedia/commons/1/13/Ivanka_Trump_at_Aston_PA_on_September_13th%2C_2016_01_%28more_cropped%29.jpg",
+          "bio": "Ivana Marie 'Ivanka' Trump (/ɪˈvɑːnkə/; born October 30, 1981) is an American television personality, fashion designer, author and businesswoman who is an advisor to the President of the United States, Donald Trump. She is the daughter of the president and his first wife, former model Ivana Trump.",
           "partners": [
             {
               "name": "Jared Kushner",
+              "img": "https://upload.wikimedia.org/wikipedia/commons/5/58/Jared_Kushner_Cropped.jpg",
+              "bio": "Jared Corey Kushner (born January 10, 1981) is an American investor, real-estate developer, and newspaper publisher who is currently senior advisor to his father-in-law, Donald Trump, the President of the United States.",
               "children": [
                 {
-                  "name": "Arabella Rose"
+                  "name": "Arabella Rose",
+                  "bio": "A daughter of Ivanka Trump."
                 },
                 {
-                  "name": "Joseph Frederick"
+                  "name": "Joseph Frederick",
+                  "bio": "A son of Ivanka Trump."
                 },
                 {
-                  "name": "Theodore James"
+                  "name": "Theodore James",
+                  "bio": "A son of Ivanka Trump"
                 }
               ]
             }
@@ -50,9 +70,13 @@
         },
         {
           "name": "Eric Trump",
+          "img": "https://upload.wikimedia.org/wikipedia/commons/4/43/Eric_Trump_2016_cropped.png",
+          "bio": "Eric Frederick Trump (born January 6, 1984) is an American businessman, philanthropist, and former reality TV personality. He is the third child and second son of the President of the United States, Donald Trump, and Ivana Trump. Alongside his older brother Donald Trump Jr., he serves as a trustee of The Trump Organization.",
           "partners": [
             {
-              "name": "Lara Yunaska"
+              "name": "Lara Yunaska",
+              "img": "https://upload.wikimedia.org/wikipedia/commons/6/69/Lara_Trump_170119-A-DR853-615.jpg",
+              "bio": "Lara Lea Trump (née Yunaska; born October 12, 1982) is an American television host, television producer, and campaign advisor. She is married to Eric Trump, son of the current President of the United States, Donald Trump. She is the host of Real News Update.[1]"
             }
           ]
         }
@@ -60,17 +84,24 @@
     },
     {
       "name": "Marla Maples",
+      "img": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Marla_Maples_LF_crop.jpg",
+      "bio": "Marla Ann Maples (born October 27, 1963)[1] is an American actress and television personality. Maples was also the second wife of Donald Trump (1993-1999).[2][3]",
       "children": [
         {
-          "name": "Tiffany Trump"
+          "name": "Tiffany Trump",
+          "img": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Tiffany_Trump_RNC_July_2016.jpg",
+          "bio": "Tiffany Ariana Trump (born October 13, 1993) is the daughter of U.S. President Donald Trump and his second wife, Marla Maples. She is currently a Georgetown Law student."
         }
       ]
     },
     {
-      "name": "Melanie Trump",
+      "name": "Melania Trump",
+      "img": "https://upload.wikimedia.org/wikipedia/commons/f/f2/Melania_Trump_Official_Portrait.jpg",
+      "bio": "Melania Trump (/məˈlɑːniə/; born Melanija Knavs; [mɛˈlaːnija ˈknaːu̯s], Germanized to Melania Knauss; April 26, 1970) is the current First Lady of the United States and third wife of the 45th President of the United States, Donald Trump.[1]",
       "children": [
         {
-          "name": "Baron Trump"
+          "name": "Baron Trump",
+          "bio": "Barron William Trump (born March 20, 2006)[7] is Donald Trump's youngest child and his only child with Melania Trump."
         }
       ]
     }

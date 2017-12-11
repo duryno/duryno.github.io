@@ -1,138 +1,61 @@
-<!--Credit: https://bl.ocks.org/d3noob/5537fe63086c4f100114f87f124850dd-->
 <!DOCTYPE html>
-<meta charset="utf-8">
-<style> /* set the CSS */
+<head>
+    <meta charset="utf-8">
 
-.node circle {
-    fill: #fff;
-    stroke: steelblue;
-    stroke-width: 3px;
-}
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,300" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="style.css">
 
-.node text { font: 12px sans-serif; }
-
-.node--internal text {
-    text-shadow: 0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff;
-}
-
-.link {
-    fill: none;
-    stroke: #ccc;
-    stroke-width: 2px;
-}
-
-</style>
-
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="js/family_tree.js"></script>
+</head>
 <body>
 
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script>
+    <header>
+        <h1>Donald Trump Family Tree</h1>
+        <div id="instructions">(Hover over nodes to see a bio)</div>
+    </header>
 
-    // set the dimensions and margins of the diagram
-    var margin = {top: 20, right: 190, bottom: 30, left: 90},
-        width = 860 - margin.left - margin.right,
-        height = 700 - margin.top - margin.bottom;
+    <section id="bio">
+        <div class="container">
+            <div class="bio-img">
+                <img width="200px" />
+            </div>
+            <h2 id="bio-name"></h2>
+            <div id="bio-content"></div>
+        </div>
+    </section>
 
-    d3.json('trump.json', function(error, json) {
+    <svg id="plot"></svg>
 
-        if (error)
-            return console.error(error);
+    <section id="description">
+        <div class="container">
+            <p>
+                In this section, we present some of the choices we have made when designing the family tree presented above and a brief reasoning behind these choices.
+            </p>
+            <br/>
+            <h3>Circles</h3>
+            <p>
+                We present each person as a circle. The name of the person is inserted in the middle of the circle. This keeps the text label inside the circle element and prevents it from interrupting with the paths between the persons. The person circles are coloured based on the generation they belong to. The horizontal position also represents the generation.
+            </p>
+            <br/>
+            <h3>Connected Circles</h3>
+            <p>
+                Connected circles indicate a partnership, most commonly marriage. If a person has had more than one partner, as is the case of Donald Trump, this notation might be a bit confusing. However, we did not come up with a better solution that would not significantly increase the complexity of the implementation.
+            </p>
+            <br/>
+            <h3>Paths</h3>
+            <p>
+                We wanted to show all parent-children links between the persons. Every child has links to both parents. Is it then clear who the two parents are.
+            </p>
+            <br/>
+            <h3>Interactivity</h3>
+            <p>
+                The implemented tree provides some simple interactive functionality. When hovering over a circle representing a
+                family member, a photo together with a short bio (copied from Wikipedia when available) of the given person appears from
+                the bottom of the screen. This serves as a rather simple example of how interactive features can increase
+                the usefulness of such trees and provide the viewer with an overall more pleasant experience.
+            </p>
+        </div>
+    </section>
 
-        // declares a tree layout and assigns the size
-        var treemap = d3.tree()
-            .size([height, width]);
-
-        //  assigns the data to a hierarchy using parent-child relationships
-        var nodes = d3.hierarchy(json, function (d) {
-            if(d.children) return d.children;
-            else return d.partners;
-        });
-
-        // maps the node data to the tree layout
-        nodes = treemap(nodes);
-
-        // append the svg object to the body of the page
-        // appends a 'group' element to 'svg'
-        // moves the 'group' element to the top left margin
-        var svg = d3.select("body").append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom),
-            g = svg.append("g")
-                .attr("transform",
-                    "translate(" + margin.left + "," + margin.top + ")");
-
-        // adds the links between the nodes
-        var link = g.selectAll(".link")
-            .data(nodes.descendants().slice(1))
-            .enter().append("path")
-            .attr("class", "link")
-            .attr("d", function (d) {
-                if(d.parent) {
-                    if(!d.parent.data.children) {
-                        d.x = (d.parent.x + (d.parent.children.indexOf(d)+1) * 50);
-                        d.y = d.parent.y;
-                        if(d.children)
-                            for(var i=0; i<d.children.length; i++)
-                                d.children[i].parent2 = d.parent;
-                    }
-                }
-                return "M" + d.parent.y + "," + d.parent.x
-                    + "C" + (d.parent.y + d.y) / 2 + "," + d.parent.x
-                    + " " + (d.parent.y + d.y) / 2 + "," + d.x
-                    + " " + d.y + "," + d.x;
-            });
-
-        //add link to parent2
-        var link2 = svg.append("g")
-            .attr("transform",
-                "translate(" + margin.left + "," + margin.top + ")")
-            .selectAll(".link")
-            .data(nodes.descendants().slice(1))
-            .enter().append("path")
-            .attr("class", "link")
-            .attr("d", function (d) {
-                console.log(d.parent2);
-                if(d.parent2)
-                    return "M" + d.parent2.y + "," + d.parent2.x
-                        + "C" + (d.parent2.y + d.y) / 2 + "," + d.parent2.x
-                        + " " + (d.parent2.y + d.y) / 2 + "," + d.x
-                        + " " + d.y + "," + d.x;
-            });
-
-        // adds each node as a group
-        var node = svg.append("g")
-            .attr("transform",
-                "translate(" + margin.left + "," + margin.top + ")")
-            .selectAll(".node")
-            .data(nodes.descendants())
-            .enter().append("g")
-            .attr("class", function (d) {
-                return "node" +
-                    (d.children ? " node--internal" : " node--leaf");
-            })
-            .attr("transform", function (d) {
-                return "translate(" + d.y + "," + d.x + ")";
-            });
-
-
-        // adds the circle to the node
-        node.append("circle")
-            .attr("r", 10);
-
-        // adds the text to the node
-//        check that doesn't have children and that parent has partners to align names properly??
-        node.append("text")
-            .attr("dy", ".35em")
-            .attr("x", function (d) {
-                return d.children ? -13 : 13;
-            })
-            .style("text-anchor", function (d) {
-                return d.children ? "end" : "start";
-            })
-            .text(function (d) {
-                return d.data.name;
-            });
-    });
-
-</script>
 </body>
