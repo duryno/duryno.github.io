@@ -9,6 +9,7 @@ section {
     width: 46%;
     min-height: 560px;
     float: left;
+    text-align: center;
     margin: 6px 1%;
     background-color: #fff;
     padding: 24px 1%;
@@ -115,4 +116,10 @@ h2, h3 {
 }
 circle:hover {
     fill: #4CAF50;
+}
+.hint {
+    font-size: 14px;
+}
+select {
+    margin-right: 24px;
 }
