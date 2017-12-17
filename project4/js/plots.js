@@ -7,6 +7,8 @@ function init() {
     var margin = {top: 50, right: 50, bottom: 50, left: 50};
     var width = +svg.node().getBoundingClientRect().width;
     var height = +svg.node().getBoundingClientRect().height;
+    var selectedHands = {};
+
 
     d3.tsv("handsPCA.txt", function(error, data) {
         if(error) throw error;
@@ -34,6 +36,9 @@ function init() {
             .data(handsPCAdata)
             .enter()
             .append('circle')
+            .attr("id", function(d){
+                return "point-" + d.id;
+            })
             .attr("r", "5px")
             .attr("cx", function (d) {
                 return x(d[selectedVar]) + "px";
@@ -43,7 +48,8 @@ function init() {
             })
             .attr("fill", "red")
             .attr("stroke", "white")
-            .on("mouseover", handleMouseOver);
+            .on("mouseover", handleMouseOver)
+            .on("click", handleMouseClick);
 
         var xAxis = d3.axisBottom()
             .scale(x)
@@ -88,6 +94,32 @@ function init() {
 
     });
 
+    function handleMouseClick(d, i) {
+
+        // generate a color
+        var color = "hsl(" + Math.random() * 360 + ",100%,50%)";
+
+        // draw a hand of the selected point or remove it if
+        // already drawn
+        if (selectedHands[d.id]) {
+            d3.select('#' + d.id).remove();
+        } else {
+            drawHand(d.id);
+            d3.select('#' + d.id).attr("stroke" , color);
+        }
+        // toggle selected
+        selectedHands[d.id] = !selectedHands[d.id];
+
+        // color point in the scatter plot
+        svg.select('#point-' + d.id)
+            .attr("fill", function(d){
+                if(selectedHands[d.id] === true){
+                  return color;
+                }
+                return "red"
+            });
+    }
+
     function handleMouseOver(d,i) {
         updateHand(d.id);
     }
@@ -98,6 +130,7 @@ function init() {
             .datum(handsData)
             .attr("class", "line")
             .attr("d", getLine(id))
+            .attr("id", id)
             .attr("stroke" , "grey")
             .attr("stroke-width", "5px")
             .attr("fill", "none")
