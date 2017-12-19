@@ -9,6 +9,8 @@
 
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="js/plots.js"></script>
+    <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 </head>
 <body>
 
@@ -21,6 +23,11 @@
         <span class="hint">Select variable 2</span>
         <select id="pca2-select" onchange="updatePoints();"></select>
         <svg id="scatter-plot"></svg>
+    </section>
+    <section>
+      <span id="clickline" class="hint">Click here to order along PCI</span>
+      <div id="minihand"></div>
+      <svg id="overlayHands"></svg>
     </section>
 
 </body>
