@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Front-end Challenge</title>
+
+    <style>
+        * {
+            font-family: 'Raleway', sans-serif;
+        }
+        label {
+            margin-top: 24px;
+            position: relative;
+        }
+        input[type=text] {
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+            border: 1px solid #e0e0e0;
+        }
+        hr {
+            margin: 48px;
+            border: none;
+            border-top: 1px solid #f0f0f0;
+        }
+        .container {
+            width: 80%;
+            text-align: center;
+            position: relative;
+            margin: 36px auto;
+        }
+        #output, #textFillOutput {
+            width: 550px;
+            height: 50px;
+            border: 1px solid #e0e0e0;
+            border-radius: 3px;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            text-align: center;
+            overflow: hidden;
+            margin: 24px auto;
+        }
+        #outputSpan, #textFillOutputSpan {
+            font-size: 32px;
+            line-height: 46px;
+            max-height: 50px;
+            overflow: hidden;
+            white-space: nowrap;
+            padding: 2px 12px;
+        }
+        #textFillOutputSpan {
+            padding: 0;
+        }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="js/jquery.textfill.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+</head>
+<body>
+
+<!--Vanilla JS solution-->
+    <section class="container">
+
+        <h2>Vanilla JS Solution</h2>
+
+        <form>
+            <label>Input text</label><br>
+            <input type="text" id="textInput" onkeyup="fitText(this)">
+            <br><br>
+            <label>Output div width</label><br>
+            <input type="range" min="100" max="1000" value="550" id="outputWidth" oninput="adjustWidth()" onchange="adjustWidth()">
+        </form>
+
+        <div id="output">
+            <span id="outputSpan"></span>
+        </div>
+
+    </section>
+
+    <script>
+        function fitText(selector) {
+            let outputElem = document.getElementById("output");
+            let outputSpan = document.getElementById("outputSpan");
+            outputSpan.innerText = selector.value;
+            if(!selector.value) return;
+
+            let verticalPadding = parseInt(window.getComputedStyle(outputSpan).getPropertyValue('padding-top')) +
+                parseInt(window.getComputedStyle(outputSpan).getPropertyValue('padding-bottom'));
+            let horizontalPadding = parseInt(window.getComputedStyle(outputSpan).getPropertyValue('padding-left')) +
+                parseInt(window.getComputedStyle(outputSpan).getPropertyValue('padding-right'));
+
+            //decrease font size when necessary
+            while(outputSpan.offsetWidth + horizontalPadding > outputElem.offsetWidth ||
+            outputSpan.offsetHeight + verticalPadding > outputElem.offsetHeight) {
+                let currentFontSize = parseInt(window.getComputedStyle(outputSpan).getPropertyValue('font-size'));
+                outputSpan.style.fontSize = currentFontSize - 1 + "px";
+            }
+
+            //increase font size when necessary
+            while(outputSpan.offsetWidth <= outputElem.offsetWidth - horizontalPadding &&
+            outputSpan.offsetHeight <= outputElem.offsetHeight - verticalPadding) {
+                let currentFontSize = parseInt(window.getComputedStyle(outputSpan).getPropertyValue('font-size'));
+                outputSpan.style.fontSize = currentFontSize + 1 + "px";
+            }
+        }
+
+        function adjustWidth() {
+            let outputElem = document.getElementById("output");
+            outputElem.style.width = document.getElementById("outputWidth").value + "px";
+            let inputElem = document.getElementById("textInput");
+            fitText(inputElem);
+        }
+    </script>
+<!--End of Vanilla JS solution-->
+
+    <hr>
+
+<!--jQuery Solution-->
+    <section class="container">
+
+        <h2>jQuery (TextFill) Solution</h2>
+
+        <form>
+            <label>Input text</label><br>
+            <input type="text" id="textFillTextInput" onkeyup="textFillFitText(this)">
+            <br><br>
+            <label>Output div width</label><br>
+            <input type="range" min="100" max="1000" value="550" id="textFillOutputWidth" oninput="textFillAdjustWidth()" onchange="textFillAdjustWidth()">
+        </form>
+
+        <div id="textFillOutput">
+            <span id="textFillOutputSpan"></span>
+        </div>
+
+    </section>
+
+    <script>
+        $('#textFillOutput').textfill({});
+
+        function textFillFitText(selector) {
+            let outputElem = document.getElementById("textFillOutputSpan");
+            outputElem.innerText = selector.value;
+            $('#textFillOutput').textfill({});
+        }
+
+        function textFillAdjustWidth() {
+            let outputElem = document.getElementById("textFillOutput");
+            outputElem.style.width = document.getElementById("textFillOutputWidth").value + "px";
+            $('#textFillOutput').textfill({});
+        }
+    </script>
+<!--End of jQuery solution-->
+
+</body>
+</html>
