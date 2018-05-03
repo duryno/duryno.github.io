@@ -69,10 +69,10 @@
 
     <form>
         <label>Input text</label><br>
-        <input type="text" id="textInput" onkeyup="fitText(this)">
+        <input type="text" id="textInput">
         <br><br>
         <label>Output div width</label><br>
-        <input type="range" min="100" max="800" value="450" id="outputWidth" oninput="adjustWidth()" onchange="adjustWidth()">
+        <input type="range" min="100" max="800" value="450" id="outputWidth">
     </form>
 
     <div id="output">
@@ -83,10 +83,26 @@
 
 <script>
     function fitText(selector) {
-        let outputElem = document.getElementById("output");
-        let outputSpan = document.getElementById("outputSpan");
-        outputSpan.innerText = selector.value;
-        if(!selector.value) return;
+        document.getElementById("textInput").addEventListener("keyup", function(){
+            console.log(selector);
+            adjustFontSize(selector);
+        });
+        document.getElementById("outputWidth").addEventListener("input", function(){
+            console.log(selector);
+            adjustWidth(selector);
+        });
+    }
+
+    function adjustFontSize(selector) { //selector must be an id
+        // console.log(selector);
+        let inputElem = document.getElementById("textInput");
+        let outputElem = document.getElementById(selector);
+        console.log(outputElem);
+        let outputSpan = outputElem.getElementsByTagName("span")[0]; //document.getElementById("outputSpan");
+        console.log(outputSpan);
+        outputSpan.innerText = inputElem.value;
+        sessionStorage.inputText = inputElem.value;
+        if(!inputElem.value) return;
 
         let verticalPadding = parseInt(window.getComputedStyle(outputSpan).getPropertyValue('padding-top')) +
             parseInt(window.getComputedStyle(outputSpan).getPropertyValue('padding-bottom'));
@@ -108,11 +124,13 @@
         }
     }
 
-    function adjustWidth() {
+    function adjustWidth(selector) {
         let outputElem = document.getElementById("output");
-        outputElem.style.width = document.getElementById("outputWidth").value + "px";
-        let inputElem = document.getElementById("textInput");
-        fitText(inputElem);
+        let sliderVal = document.getElementById("outputWidth").value;
+        sessionStorage.outputWidth = sliderVal;
+        outputElem.style.width = sliderVal + "px";
+        // let inputElem = document.getElementById("textInput");
+        adjustFontSize(selector);
     }
 </script>
 <!--End of Vanilla JS solution-->
@@ -126,10 +144,10 @@
 
     <form>
         <label>Input text</label><br>
-        <input type="text" id="textFillTextInput" onkeyup="textFillFitText(this)">
+        <input type="text" id="textFillTextInput">
         <br><br>
         <label>Output div width</label><br>
-        <input type="range" min="100" max="800" value="450" id="textFillOutputWidth" oninput="textFillAdjustWidth()" onchange="textFillAdjustWidth()">
+        <input type="range" min="100" max="800" value="450" id="textFillOutputWidth">
     </form>
 
     <div id="textFillOutput">
@@ -139,18 +157,32 @@
 </section>
 
 <script>
-    $('#textFillOutput').textfill({});
-
     function textFillFitText(selector) {
-        let outputElem = document.getElementById("textFillOutputSpan");
-        outputElem.innerText = selector.value;
-        $('#textFillOutput').textfill({});
+        $(selector).textfill({});
+
+        document.getElementById("textFillTextInput").addEventListener("keyup", function(){
+            textFillUpdateText(selector);
+        });
+        document.getElementById("textFillOutputWidth").addEventListener("input", function(){
+            textFillAdjustWidth(selector);
+        });
     }
 
-    function textFillAdjustWidth() {
-        let outputElem = document.getElementById("textFillOutput");
-        outputElem.style.width = document.getElementById("textFillOutputWidth").value + "px";
-        $('#textFillOutput').textfill({});
+    function textFillUpdateText(selector) { //selector must be an id
+        let inputElem = document.getElementById("textFillTextInput");
+        let outputElem = $(selector);
+        let outputSpan = outputElem.find("span"); //document.getElementById("outputSpan");
+        outputSpan.text(inputElem.value);
+        sessionStorage.textFillInputText = inputElem.value;
+        outputElem.textfill({});
+    }
+
+    function textFillAdjustWidth(selector) {
+        let outputElem = $(selector);
+        let sliderVal = document.getElementById("textFillOutputWidth").value;
+        sessionStorage.textFillOutputWidth = sliderVal;
+        outputElem.width(sliderVal);
+        outputElem.textfill({});
     }
 </script>
 <!--End of jQuery solution-->
@@ -166,6 +198,28 @@
         </a>
     </p>
 </section>
+
+<script>
+    window.onload = function () {
+        let textInputElem = document.getElementById("textInput");
+        let textFillTextInputElem = document.getElementById("textFillTextInput");
+
+        document.getElementById("textInput").value =
+            sessionStorage.inputText ? sessionStorage.inputText : "";
+        document.getElementById("outputWidth").value = sessionStorage.outputWidth;
+
+        document.getElementById("textFillTextInput").value =
+            sessionStorage.textFillInputText ? sessionStorage.textFillInputText : "";
+        document.getElementById("textFillOutputWidth").value = sessionStorage.textFillOutputWidth;
+
+        fitText("output");
+        adjustWidth("output");
+
+        textFillFitText("#textFillOutput");
+        textFillUpdateText("#textFillOutput");
+        textFillAdjustWidth("#textFillOutput");
+    }
+</script>
 
 </body>
 </html>
