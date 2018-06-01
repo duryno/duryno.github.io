@@ -1,0 +1,119 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+html, body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #f7f7f7;
+}
+header {
+    width: 100%;
+    padding: 60px 0;
+    color: #fff;
+    background-color: #FF9800;
+}
+.node circle {
+    fill: #fff;
+    stroke-width: 3px;
+    transition-duration: 0.5s;
+}
+.node circle:hover {
+    transition-duration: 0.5s;
+}
+.red {
+    stroke: #F44336;
+}
+.blue {
+    stroke: #2196F3;
+}
+.green {
+    stroke: #4CAF50;
+}
+.red circle:hover {
+    fill: #F44336;
+}
+.blue circle:hover {
+    fill: #2196F3;
+}
+.green circle:hover {
+    fill: #4CAF50;
+}
+.red:hover text, .blue:hover text, .green:hover text {
+    fill: #fff;
+}
+.node text { font: 12px sans-serif; }
+.link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 2px;
+}
+#bio {
+    position: fixed;
+    bottom: -300px;
+    left: 0;
+    right: 0;
+    height: 300px;
+    z-index: 99;
+    background-color: #8BC34A;
+    -webkit-box-shadow: 0px -5px 15px rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0px -5px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0px -5px 15px rgba(0, 0, 0, 0.15);
+    visibility: hidden;
+    transition-duration: 0.5s;
+}
+.container {
+    width: 60%;
+    min-width: 900px;
+    padding-top: 40px;
+    margin: 0 auto;
+}
+.bio-img {
+    width: 200px;
+    height: 200px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #fff;
+    float: left;
+}
+#bio-content {
+    width: 600px;
+    padding: 6px 24px;
+    color: #ffffff;
+    font-size: 1.2em;
+    float: right;
+    text-align: justify;
+}
+#bio-name {
+    width: 600px;
+    float: right;
+    color: #fff;
+}
+svg {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+h1 {
+    text-align: center;
+    font-weight: 300;
+}
+h3 {
+    color: #fff;
+    font-weight: 600;
+}
+#instructions {
+    font-size: 14px;
+    text-align: center;
+}
+#description {
+    width: 100%;
+    float: left;
+    background-color: #FF9800;
+    padding: 60px 0;
+    color: #fff;
+}
+#description .container {
+    padding:0;
+}
