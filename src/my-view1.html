@@ -1,0 +1,101 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-view1">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+
+                padding: 10px;
+            }
+
+            #content {
+                margin: 0 auto;
+                position: relative;
+                width: 920px;
+            }
+            #entryContainer {
+                margin: 16px auto;
+                width: 512px;
+                padding: 24px;
+                background-color: #ffffff;
+                position: relative;
+            }
+            #thumbnail {
+                float: right;
+            }
+            .parentAnchor {
+                position: absolute;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                right: 0;
+            }
+            #details {
+                z-index: 2;
+                pointer-events: none;
+                position: relative;
+            }
+            .childAnchor {
+                pointer-events: all;
+            }
+        </style>
+
+        <div id="content">
+
+            <template id="repeatTemplate" is="dom-repeat" items="{{entries}}">
+                <div id="entryContainer">
+                    <a href="view2/[[item.data.permalink]]" class="parentAnchor"></a>
+                    <div id="thumbnail">
+                        <img src="[[item.data.thumbnail]]" />
+                    </div>
+                    <div id="details">
+                        <h2>[[item.data.title]]</h2>
+                        <div>Created: [[getFormattedDate(item.data.created)]]</div>
+                        <div>Number of comments: [[item.data.num_comments]]</div>
+                        <div>Author: [[item.data.author]]</div>
+                        <div>Score: [[item.data.score]]</div>
+                        <div>
+                            Link:
+                            <a href="https://reddit.com/[[item.data.permalink]]" class="childAnchor">
+                                https://reddit.com/[[item.data.permalink]]
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+        </div>
+
+    </template>
+
+    <script>
+        class MyView1 extends Polymer.Element {
+            static get is() { return 'my-view1'; }
+
+            static get properties() {
+                return {
+                    entries: Array
+                };
+            }
+
+            getFormattedDate(val) {
+                return new Date(val * 1000);
+            }
+
+        }
+
+        window.customElements.define(MyView1.is, MyView1);
+    </script>
+</dom-module>
